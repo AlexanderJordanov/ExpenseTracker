@@ -26,6 +26,7 @@ namespace ExpenseTracker.Data.Seeding
 
                 await userManager.CreateAsync(admin, "Admin123!");
                 await userManager.AddToRoleAsync(admin, "Admin");
+                await userManager.AddToRoleAsync(admin, "User");
             }
         }
     }
