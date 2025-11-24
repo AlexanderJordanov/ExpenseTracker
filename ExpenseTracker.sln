@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36119.2 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExpenseTracker", "ExpenseTracker\ExpenseTracker.csproj", "{DBA26C3D-A445-4EA0-B082-404E6E19307E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DBA26C3D-A445-4EA0-B082-404E6E19307E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DBA26C3D-A445-4EA0-B082-404E6E19307E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DBA26C3D-A445-4EA0-B082-404E6E19307E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DBA26C3D-A445-4EA0-B082-404E6E19307E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {136A9B7B-4FDF-4503-8884-475698DC1253}
+	EndGlobalSection
+EndGlobal
