@@ -1,4 +1,5 @@
 ﻿using ExpenseTracker.Services.Interfaces;
+using ExpenseTracker.ViewModels.Expenses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -22,6 +23,32 @@ namespace ExpenseTracker.Controllers
             var expenses = await _expenseService.GetUserExpensesAsync(userId);
 
             return View(expenses);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Create()
+        {
+            var model = await _expenseService.GetExpenseFormModelAsync();
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(ExpenseFormViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                var filledModel = await _expenseService.GetExpenseFormModelAsync();
+                model.Categories = filledModel.Categories;
+
+                return View(model);
+            }
+
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+
+            await _expenseService.CreateExpenseAsync(userId, model);
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }

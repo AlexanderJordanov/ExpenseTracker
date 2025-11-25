@@ -1,6 +1,8 @@
 ﻿using ExpenseTracker.Data;
+using ExpenseTracker.Data.Models;
 using ExpenseTracker.Services.Interfaces;
 using ExpenseTracker.ViewModels.Expenses;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace ExpenseTracker.Services
@@ -28,6 +30,38 @@ namespace ExpenseTracker.Services
                     Description = e.Description
                 })
                 .ToListAsync();
+        }
+
+        public async Task<ExpenseFormViewModel> GetExpenseFormModelAsync()
+        {
+            var categories = await _context.Categories
+                .OrderBy(c => c.Name)
+                .Select(c => new SelectListItem
+                {
+                    Value = c.Id.ToString(),
+                    Text = c.Name
+                })
+                .ToListAsync();
+
+            return new ExpenseFormViewModel
+            {
+                Categories = categories
+            };
+        }
+
+        public async Task CreateExpenseAsync(string userId, ExpenseFormViewModel model)
+        {
+            var expense = new Expense
+            {
+                Amount = model.Amount,
+                Date = model.Date,
+                Description = model.Description,
+                CategoryId = model.CategoryId,
+                UserId = userId
+            };
+
+            _context.Expenses.Add(expense);
+            await _context.SaveChangesAsync();
         }
     }
 }
