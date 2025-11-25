@@ -2,6 +2,19 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
+<div class="text-center mt-5">
+    <h1 class="display-4 mb-3">Welcome to Expense Tracker</h1>
+    <p class="lead mb-4">
+        Track your daily spending, control your budget and see where your money goes.
+    </p>
+
+    @if (User.Identity?.IsAuthenticated ?? false)
+    {
+        <a asp-controller="Expenses"
+           asp-action="Index"
+           class="btn btn-primary btn-lg">
+            My Expenses
+        </a>
+    }
 </div>
+
