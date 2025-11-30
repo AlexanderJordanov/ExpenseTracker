@@ -1,0 +1,75 @@
+﻿@model ExpenseTracker.ViewModels.Expenses.ExpenseStatisticsViewModel
+
+@{
+    ViewData["Title"] = "Statistics";
+}
+
+<h2 class="mt-4 mb-3">@ViewData["Title"]</h2>
+
+<a asp-action="Index" class="btn btn-secondary mb-3">
+    Back to My Expenses
+</a>
+
+
+@if (!Model.CategoryStats.Any())
+{
+    <div class="alert alert-info">No data available.</div>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Category</th>
+                <th class="text-end">Amount (лв.)</th>
+                <th class="text-end">%</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var cat in Model.CategoryStats)
+            {
+                <tr>
+                    <td>@cat.CategoryName</td>
+                    <td class="text-end">@cat.TotalAmount.ToString("F2") лв.</td>
+                    <td class="text-end">@cat.Percentage.ToString("F2")%</td>
+                </tr>
+            }
+        </tbody>
+        <tfoot class="table-secondary">
+            <tr>
+                <td><strong>Total</strong></td>
+                <td class="text-end"><strong>@Model.TotalAmount.ToString("F2") лв.</strong></td>
+                <td></td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <div class="mt-5 d-flex justify-content-center">
+        <div style="max-width: 400px; width: 100%;">
+            <canvas id="expensesChart"></canvas>
+        </div>
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        const labels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+                    Model.CategoryStats.Select(c => c.CategoryName)));
+
+    const data = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+                Model.CategoryStats.Select(c => c.TotalAmount)));
+
+    const ctx = document.getElementById('expensesChart').getContext('2d');
+
+        new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: data
+                }]
+            }
+        });
+    </script>
+}

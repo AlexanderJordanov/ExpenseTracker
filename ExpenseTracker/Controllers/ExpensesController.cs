@@ -103,10 +103,13 @@ namespace ExpenseTracker.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        public IActionResult Statistics()
+        public async Task<IActionResult> Statistics()
         {
-            // тук после ще правим статистиките
-            return View();
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+            var model = await _expenseService.GetStatisticsAsync(userId);
+
+            return View(model);
         }
+
     }
 }

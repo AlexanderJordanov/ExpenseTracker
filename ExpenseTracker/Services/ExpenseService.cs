@@ -132,5 +132,42 @@ namespace ExpenseTracker.Services
             await _context.SaveChangesAsync();
             return true;
         }
+
+        public async Task<ExpenseStatisticsViewModel> GetStatisticsAsync(string userId)
+        {
+            var grouped = await _context.Expenses
+                .Where(e => e.UserId == userId)
+                .GroupBy(e => e.Category.Name)
+                .Select(g => new
+                {
+                    CategoryName = g.Key,
+                    TotalAmount = g.Sum(e => e.Amount)
+                })
+                .ToListAsync();
+
+            if (!grouped.Any())
+            {
+                return new ExpenseStatisticsViewModel();
+            }
+
+            var total = grouped.Sum(x => x.TotalAmount);
+
+            var categoryStats = grouped
+                .Select(x => new ExpenseCategoryStatisticsViewModel
+                {
+                    CategoryName = x.CategoryName,
+                    TotalAmount = x.TotalAmount,
+                    Percentage = (double)(x.TotalAmount / total * 100)
+                })
+                .OrderByDescending(x => x.TotalAmount)
+                .ToList();
+
+            return new ExpenseStatisticsViewModel
+            {
+                CategoryStats = categoryStats,
+                TotalAmount = total
+            };
+        }
+
     }
 }

@@ -15,6 +15,9 @@ namespace ExpenseTracker.Services.Interfaces
         Task<bool> UpdateExpenseAsync(int id, string userId, ExpenseFormViewModel model);
 
         Task<bool> SoftDeleteExpenseAsync(int id, string userId);
+
+        Task<ExpenseStatisticsViewModel> GetStatisticsAsync(string userId);
+
     }
 }
 
