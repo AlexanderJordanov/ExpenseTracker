@@ -63,5 +63,74 @@ namespace ExpenseTracker.Services
             _context.Expenses.Add(expense);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<ExpenseFormViewModel?> GetExpenseForEditAsync(int id, string userId)
+        {
+            var expense = await _context.Expenses
+                .Where(e => e.Id == id && e.UserId == userId)
+                .FirstOrDefaultAsync();
+
+            if (expense == null)
+            {
+                return null;
+            }
+
+            var categories = await _context.Categories
+                .OrderBy(c => c.Name)
+                .Select(c => new SelectListItem
+                {
+                    Value = c.Id.ToString(),
+                    Text = c.Name
+                })
+                .ToListAsync();
+
+            return new ExpenseFormViewModel
+            {
+                Id = expense.Id,
+                Amount = expense.Amount,
+                Date = expense.Date,
+                Description = expense.Description,
+                CategoryId = expense.CategoryId,
+                Categories = categories
+            };
+        }
+
+        public async Task<bool> UpdateExpenseAsync(int id, string userId, ExpenseFormViewModel model)
+        {
+            var expense = await _context.Expenses
+                .Where(e => e.Id == id && e.UserId == userId)
+                .FirstOrDefaultAsync();
+
+            if (expense == null)
+            {
+                return false;
+            }
+
+            expense.Amount = model.Amount;
+            expense.Date = model.Date;
+            expense.Description = model.Description;
+            expense.CategoryId = model.CategoryId;
+
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> SoftDeleteExpenseAsync(int id, string userId)
+        {
+            var expense = await _context.Expenses
+                .Where(e => e.Id == id && e.UserId == userId)
+                .FirstOrDefaultAsync();
+
+            if (expense == null)
+            {
+                return false;
+            }
+
+            expense.IsDeleted = true;
+            expense.DeletedOn = DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+            return true;
+        }
     }
 }

@@ -9,6 +9,12 @@ namespace ExpenseTracker.Services.Interfaces
         Task<ExpenseFormViewModel> GetExpenseFormModelAsync();
 
         Task CreateExpenseAsync(string userId, ExpenseFormViewModel model);
+
+        Task<ExpenseFormViewModel?> GetExpenseForEditAsync(int id, string userId);
+
+        Task<bool> UpdateExpenseAsync(int id, string userId, ExpenseFormViewModel model);
+
+        Task<bool> SoftDeleteExpenseAsync(int id, string userId);
     }
 }
 

@@ -50,5 +50,63 @@ namespace ExpenseTracker.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+            var model = await _expenseService.GetExpenseForEditAsync(id, userId);
+
+            if (model == null)
+            {
+                return NotFound();
+            }
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, ExpenseFormViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                var filledModel = await _expenseService.GetExpenseFormModelAsync();
+                model.Categories = filledModel.Categories;
+
+                return View(model);
+            }
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+            var success = await _expenseService.UpdateExpenseAsync(id, userId, model);
+
+            if (!success)
+            {
+                return NotFound();
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+            var success = await _expenseService.SoftDeleteExpenseAsync(id, userId);
+
+            if (!success)
+            {
+                return NotFound();
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        public IActionResult Statistics()
+        {
+            // тук после ще правим статистиките
+            return View();
+        }
     }
 }

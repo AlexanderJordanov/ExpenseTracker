@@ -7,6 +7,8 @@ namespace ExpenseTracker.ViewModels.Expenses
 {
     public class ExpenseFormViewModel
     {
+        public int Id { get; set; }
+
         [Required]
         [Display(Name = "Category")]
         public int CategoryId { get; set; }
