@@ -6,7 +6,6 @@ namespace ExpenseTracker.Controllers
     {
         public IActionResult Set(string theme, string? returnUrl = "/")
         {
-            // позволяваме само нашите 3 теми
             var allowedThemes = new[] { "lux", "cosmo", "darkly" };
 
             if (!allowedThemes.Contains(theme))

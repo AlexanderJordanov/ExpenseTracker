@@ -2,6 +2,24 @@
 
 @{
     ViewData["Title"] = "My Expenses";
+
+    var currency = Context.Request.Cookies["currency"] ?? "BGN";
+
+    decimal rateToBGN = currency switch
+    {
+        "USD" => 1.80m,
+        "EUR" => 1.95m,
+        "GBP" => 2.25m,
+        _ => 1m 
+    };
+
+    string symbol = currency switch
+    {
+        "USD" => "$",
+        "EUR" => "€",
+        "GBP" => "£",
+        _ => "лв."
+    };
 }
 
 <div class="d-flex justify-content-between align-items-center mt-4 mb-3">
@@ -31,7 +49,7 @@
         <tr>
             <th>Date</th>
             <th>Category</th>
-            <th class="text-end">Amount (лв.)</th>
+            <th class="text-end">Amount (@symbol)</th>
             <th>Description</th>
             <th class="text-end">Actions</th>
         </tr>
@@ -42,7 +60,7 @@
             <tr>
                 <td>@e.Date.ToShortDateString()</td>
                 <td>@e.CategoryName</td>
-                <td class="text-end">@e.Amount.ToString("F2") лв.</td>
+                <td class="text-end">@((e.Amount / rateToBGN).ToString("F2")) @symbol</td>
                 <td>@e.Description</td>
                 <td class="text-end">
                     <div class="btn-group btn-group-sm">

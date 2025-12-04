@@ -14,6 +14,16 @@
         "darkly" => "Darkly",
         _ => "Lux"
     };
+
+    var currency = Context.Request.Cookies["currency"] ?? "BGN";
+
+    var currencySymbol = currency switch
+    {
+        "USD" => "$",
+        "EUR" => "€",
+        "GBP" => "£",
+        _ => "лв."
+    };
 }
 
 <!DOCTYPE html>
@@ -78,7 +88,53 @@
                                     </a>
                                 </li>
                             </ul>
-                        </li>
+                            @if (User.Identity?.IsAuthenticated ?? false)
+                            {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle text-uppercase" href="#" id="currencyDropdown" role="button"
+                                   data-bs-toggle="dropdown" aria-expanded="false">
+                                    Currency: @currency
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="currencyDropdown">
+                                    <li>
+                                        <a class="dropdown-item"
+                                           asp-controller="ApplicationUser"
+                                           asp-action="SetCurrency"
+                                           asp-route-code="BGN"
+                                           asp-route-returnUrl="@Context.Request.Path">
+                                            BGN
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item"
+                                           asp-controller="ApplicationUser"
+                                           asp-action="SetCurrency"
+                                           asp-route-code="USD"
+                                           asp-route-returnUrl="@Context.Request.Path">
+                                            USD
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item"
+                                           asp-controller="ApplicationUser"
+                                           asp-action="SetCurrency"
+                                           asp-route-code="EUR"
+                                           asp-route-returnUrl="@Context.Request.Path">
+                                            EUR
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item"
+                                           asp-controller="ApplicationUser"
+                                           asp-action="SetCurrency"
+                                           asp-route-code="GBP"
+                                           asp-route-returnUrl="@Context.Request.Path">
+                                            GBP
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        }                      
                     </ul>
 
                     <partial name="_LoginPartial" />

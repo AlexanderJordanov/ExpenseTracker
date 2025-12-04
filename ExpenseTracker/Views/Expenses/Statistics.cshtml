@@ -2,6 +2,24 @@
 
 @{
     ViewData["Title"] = "Statistics";
+
+    var currency = Context.Request.Cookies["currency"] ?? "BGN";
+
+    decimal rateToBGN = currency switch
+    {
+        "USD" => 1.80m,
+        "EUR" => 1.95m,
+        "GBP" => 2.25m,
+        _ => 1m
+    };
+
+    string symbol = currency switch
+    {
+        "USD" => "$",
+        "EUR" => "€",
+        "GBP" => "£",
+        _ => "лв."
+    };
 }
 
 <h2 class="mt-4 mb-3">@ViewData["Title"]</h2>
@@ -30,7 +48,7 @@ else
             {
                 <tr>
                     <td>@cat.CategoryName</td>
-                    <td class="text-end">@cat.TotalAmount.ToString("F2") лв.</td>
+                    <td class="text-end">@((cat.TotalAmount / rateToBGN).ToString("F2")) @symbol</td>
                     <td class="text-end">@cat.Percentage.ToString("F2")%</td>
                 </tr>
             }
@@ -38,7 +56,7 @@ else
         <tfoot class="table-secondary">
             <tr>
                 <td><strong>Total</strong></td>
-                <td class="text-end"><strong>@Model.TotalAmount.ToString("F2") лв.</strong></td>
+                <td class="text-end"><strong>@((Model.TotalAmount / rateToBGN).ToString("F2")) @symbol</strong></td>
                 <td></td>
             </tr>
         </tfoot>
@@ -54,22 +72,45 @@ else
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script>
+        const ctx = document.getElementById('expensesChart').getContext('2d');
+
         const labels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
                     Model.CategoryStats.Select(c => c.CategoryName)));
 
     const data = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
-                Model.CategoryStats.Select(c => c.TotalAmount)));
+                Model.CategoryStats.Select(c => c.TotalAmount / rateToBGN)));
 
-    const ctx = document.getElementById('expensesChart').getContext('2d');
+    const symbol = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(symbol));
 
-        new Chart(ctx, {
+        const chart = new Chart(ctx, {
             type: 'pie',
             data: {
                 labels: labels,
                 datasets: [{
-                    data: data
+                    data: data,
+                    backgroundColor: [
+                        '#4e79a7', '#f28e2b', '#e15759',
+                        '#76b7b2', '#59a14f', '#edc948',
+                        '#b07aa1', '#ff9da7', '#9c755f', '#bab0ab'
+                    ],
+                    borderWidth: 1
                 }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'top' },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let value = context.parsed;
+                                return value.toFixed(2) + " " + symbol;
+                            }
+                        }
+                    }
+                }
             }
         });
     </script>
+
 }

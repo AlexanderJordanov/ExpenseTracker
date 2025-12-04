@@ -15,7 +15,6 @@ namespace ExpenseTracker.Services
         {
             _context = context;
         }
-
         public async Task<IEnumerable<ExpenseListViewModel>> GetUserExpensesAsync(string userId)
         {
             return await _context.Expenses
@@ -31,7 +30,6 @@ namespace ExpenseTracker.Services
                 })
                 .ToListAsync();
         }
-
         public async Task<ExpenseFormViewModel> GetExpenseFormModelAsync()
         {
             var categories = await _context.Categories
@@ -48,7 +46,6 @@ namespace ExpenseTracker.Services
                 Categories = categories
             };
         }
-
         public async Task CreateExpenseAsync(string userId, ExpenseFormViewModel model)
         {
             var expense = new Expense
@@ -63,7 +60,6 @@ namespace ExpenseTracker.Services
             _context.Expenses.Add(expense);
             await _context.SaveChangesAsync();
         }
-
         public async Task<ExpenseFormViewModel?> GetExpenseForEditAsync(int id, string userId)
         {
             var expense = await _context.Expenses
@@ -94,7 +90,6 @@ namespace ExpenseTracker.Services
                 Categories = categories
             };
         }
-
         public async Task<bool> UpdateExpenseAsync(int id, string userId, ExpenseFormViewModel model)
         {
             var expense = await _context.Expenses
@@ -114,7 +109,6 @@ namespace ExpenseTracker.Services
             await _context.SaveChangesAsync();
             return true;
         }
-
         public async Task<bool> SoftDeleteExpenseAsync(int id, string userId)
         {
             var expense = await _context.Expenses
@@ -132,7 +126,6 @@ namespace ExpenseTracker.Services
             await _context.SaveChangesAsync();
             return true;
         }
-
         public async Task<ExpenseStatisticsViewModel> GetStatisticsAsync(string userId)
         {
             var grouped = await _context.Expenses
@@ -168,6 +161,5 @@ namespace ExpenseTracker.Services
                 TotalAmount = total
             };
         }
-
     }
 }

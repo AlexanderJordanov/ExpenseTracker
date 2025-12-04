@@ -44,12 +44,24 @@ namespace ExpenseTracker.Controllers
                 return View(model);
             }
 
-            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+            var currency = Request.Cookies["currency"] ?? "BGN";
 
+            decimal rateToBGN = currency switch
+            {
+                "USD" => 1.80m,
+                "EUR" => 1.95m,
+                "GBP" => 2.25m,
+                _ => 1m
+            };
+
+            model.Amount = model.Amount * rateToBGN;
+
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
             await _expenseService.CreateExpenseAsync(userId, model);
 
             return RedirectToAction(nameof(Index));
         }
+
 
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
@@ -62,8 +74,21 @@ namespace ExpenseTracker.Controllers
                 return NotFound();
             }
 
+            var currency = Request.Cookies["currency"] ?? "BGN";
+
+            decimal rateToBGN = currency switch
+            {
+                "USD" => 1.80m,
+                "EUR" => 1.95m,
+                "GBP" => 2.25m,
+                _ => 1m
+            };
+
+            model.Amount = model.Amount / rateToBGN;
+
             return View(model);
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -77,6 +102,18 @@ namespace ExpenseTracker.Controllers
                 return View(model);
             }
 
+            var currency = Request.Cookies["currency"] ?? "BGN";
+
+            decimal rateToBGN = currency switch
+            {
+                "USD" => 1.80m,
+                "EUR" => 1.95m,
+                "GBP" => 2.25m,
+                _ => 1m
+            };
+
+            model.Amount = model.Amount * rateToBGN;
+
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
             var success = await _expenseService.UpdateExpenseAsync(id, userId, model);
 
@@ -87,6 +124,7 @@ namespace ExpenseTracker.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
