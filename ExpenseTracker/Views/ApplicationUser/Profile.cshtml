@@ -1,0 +1,96 @@
+﻿@model ExpenseTracker.ViewModels.ApplicationUser.ProfileViewModel
+
+@{
+    ViewData["Title"] = "My Profile";
+
+    var hasPicture = !string.IsNullOrWhiteSpace(Model.ProfilePictureUrl);
+    var pictureUrl = hasPicture
+        ? Model.ProfilePictureUrl
+        : "https://via.placeholder.com/200x200.png?text=No+Photo";
+}
+
+<h2 class="mt-4 mb-3">@ViewData["Title"]</h2>
+
+@if (TempData["ProfileMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["ProfileMessage"]</div>
+}
+
+<div class="row">
+    <!-- LEFT: Picture -->
+    <div class="col-md-4 text-center mb-4">
+        <img src="@pictureUrl" alt="Profile picture" class="img-fluid rounded-circle mb-3" style="max-width: 200px;" />
+
+        @if (hasPicture)
+        {
+            <form asp-action="RemoveProfilePicture" method="post">
+                <button type="submit" class="btn btn-outline-danger btn-sm">Remove profile picture</button>
+            </form>
+
+            <hr />
+
+            <form asp-action="SetProfilePicture" method="post" class="mt-2">
+                <div class="mb-2">
+                    <label asp-for="ProfilePictureUrl" class="form-label">Change picture URL</label>
+                    <input asp-for="ProfilePictureUrl" class="form-control" />
+                    <span asp-validation-for="ProfilePictureUrl" class="text-danger"></span>
+                </div>
+                <button type="submit" class="btn btn-outline-primary btn-sm">Update picture</button>
+            </form>
+        }
+        else
+        {
+            <form asp-action="SetProfilePicture" method="post">
+                <div class="mb-2">
+                    <label asp-for="ProfilePictureUrl" class="form-label">Add picture URL</label>
+                    <input asp-for="ProfilePictureUrl" class="form-control" />
+                    <span asp-validation-for="ProfilePictureUrl" class="text-danger"></span>
+                </div>
+                <button type="submit" class="btn btn-primary btn-sm">Add profile picture</button>
+            </form>
+        }
+    </div>
+
+    <!-- RIGHT: Personal data -->
+    <div class="col-md-8">
+        <form asp-action="UpdateProfile" method="post" class="card">
+            <div class="card-body">
+                <div class="mb-3">
+                    <label asp-for="Email" class="form-label"></label>
+                    <input asp-for="Email" class="form-control" readonly />
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="FirstName" class="form-label"></label>
+                    <input asp-for="FirstName" class="form-control" />
+                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="LastName" class="form-label"></label>
+                    <input asp-for="LastName" class="form-control" />
+                    <span asp-validation-for="LastName" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="DateOfBirth" class="form-label"></label>
+                    <input asp-for="DateOfBirth" type="date" class="form-control" />
+                    <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <a asp-controller="Expenses" asp-action="Index" class="btn btn-outline-secondary">
+                        My Expenses
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        Edit
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

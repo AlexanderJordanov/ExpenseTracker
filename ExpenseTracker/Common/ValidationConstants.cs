@@ -7,6 +7,7 @@
             public const int FirstNameMaxLength = 50;
             public const int LastNameMaxLength = 50;
             public const int PreferredCurrencyMaxLength = 10;
+            public const int ProfilePictureUrlMaxLength = 2048;
         }
 
         public static class Category
