@@ -13,13 +13,10 @@ namespace ExpenseTracker.Data.Models
         [MaxLength(ValidationConstants.Category.NameMaxLength)]
         public string Name { get; set; } = null!;
 
-        [Range(ValidationConstants.Category.MonthlyLimitMinValue, ValidationConstants.Category.MonthlyLimitMaxValue)]
-        public decimal MonthlyLimit { get; set; }
-
-        [Required]
-        public string UserId { get; set; } = null!;
-        public ApplicationUser User { get; set; } = null!;
+        public ICollection<UserCategoryBudget> UserCategoryBudgets { get; set; }
+            = new List<UserCategoryBudget>();
 
         public ICollection<Expense> Expenses { get; set; } = new List<Expense>();
     }
+
 }

@@ -23,5 +23,8 @@ namespace ExpenseTracker.Data.Models
         public string? ProfilePictureUrl { get; set; }
 
         public DateTime CreatedOn { get; set; } = DateTime.UtcNow;
+
+        public ICollection<UserCategoryBudget> CategoryBudgets { get; set; }
+        = new List<UserCategoryBudget>();
     }
 }

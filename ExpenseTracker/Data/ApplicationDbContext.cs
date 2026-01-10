@@ -13,6 +13,7 @@ namespace ExpenseTracker.Data
         }
         public DbSet<Category> Categories { get; set; } = null!;
         public DbSet<Expense> Expenses { get; set; } = null!;
+        public DbSet<UserCategoryBudget> UserCategoryBudgets { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -20,13 +21,13 @@ namespace ExpenseTracker.Data
 
             builder.Entity<Expense>().HasQueryFilter(e => !e.IsDeleted);
 
-            builder.Entity<Category>()
-                .Property(c => c.MonthlyLimit)
-                .HasColumnType("decimal(18,2)");
-
             builder.Entity<Expense>()
                 .Property(e => e.Amount)
                 .HasColumnType("decimal(18,2)");
+
+            builder.Entity<UserCategoryBudget>()
+                .Property(b => b.MonthlyLimit)
+                .HasPrecision(18, 2);
 
             builder.Entity<Category>()
                 .HasMany(c => c.Expenses)

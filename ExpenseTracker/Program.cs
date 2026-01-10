@@ -29,6 +29,7 @@ namespace ExpenseTracker
             builder.Services.AddControllersWithViews();
 
             builder.Services.AddScoped<IExpenseService, ExpenseService>();
+            builder.Services.AddScoped<IBudgetService, BudgetService>();
 
             var app = builder.Build();
 

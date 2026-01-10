@@ -21,8 +21,15 @@ namespace ExpenseTracker.Controllers
             string userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
 
             var expenses = await _expenseService.GetUserExpensesAsync(userId);
+            var budget = await _expenseService.GetCurrentMonthBudgetAsync(userId);
 
-            return View(expenses);
+            var model = new ExpensesIndexViewModel
+            {
+                Expenses = expenses,
+                Budget = budget
+            };
+
+            return View(model);
         }
 
         [HttpGet]

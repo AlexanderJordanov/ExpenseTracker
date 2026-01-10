@@ -12,7 +12,11 @@
 
         public static class Category
         {
-            public const int NameMaxLength = 50;
+            public const int NameMaxLength = 50;            
+        }
+
+        public static class Budget
+        {
             public const int MonthlyLimitMinValue = 0;
             public const int MonthlyLimitMaxValue = 1000000;
         }

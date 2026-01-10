@@ -1,4 +1,5 @@
-﻿using ExpenseTracker.ViewModels.Expenses;
+﻿using ExpenseTracker.ViewModels.Budgets;
+using ExpenseTracker.ViewModels.Expenses;
 
 namespace ExpenseTracker.Services.Interfaces
 {
@@ -17,6 +18,8 @@ namespace ExpenseTracker.Services.Interfaces
         Task<bool> SoftDeleteExpenseAsync(int id, string userId);
 
         Task<ExpenseStatisticsViewModel> GetStatisticsAsync(string userId);
+
+        Task<BudgetSummaryViewModel> GetCurrentMonthBudgetAsync(string userId);
     }
 }
 

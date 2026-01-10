@@ -1,0 +1,46 @@
+﻿@model ExpenseTracker.ViewModels.Budgets.BudgetSummaryViewModel
+
+@{
+    ViewData["Title"] = "My Budgets";
+}
+
+<h2 class="mb-4">My Monthly Budgets</h2>
+
+<table class="table table-bordered align-middle">
+    <thead>
+        <tr>
+            <th>Category</th>
+            <th>Spent</th>
+            <th>Limit</th>
+            <th style="width: 30%">Usage</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var c in Model.Categories)
+        {
+            <tr>
+                <td>@c.CategoryName</td>
+                <td>@c.SpentThisMonth.ToString("F2")</td>
+                <td>
+                    @(c.MonthlyLimit == 0 ? "No limit" : c.MonthlyLimit.ToString("F2"))
+                </td>
+                <td>
+                    <div class="progress">
+                        <div class="progress-bar @c.ProgressBarClass"
+                             role="progressbar"
+                             style="width:@Math.Min(c.UsagePercent, 100)%">
+                            @c.UsagePercent.ToString("F0")%
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <span class="badge @c.BadgeClass">
+                        @c.Status
+                    </span>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+

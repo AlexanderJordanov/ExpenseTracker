@@ -1,0 +1,47 @@
+﻿@model IEnumerable<CategoryBudgetInputViewModel>
+
+<h2>Manage Monthly Budgets</h2>
+
+<div class="mb-3">
+    <a asp-controller="Expenses"
+       asp-action="Index"
+       class="btn btn-sm btn-outline-secondary">
+        ← Back to My Expenses
+    </a>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Category</th>
+            <th style="width: 200px;">Monthly limit</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var c in Model)
+        {
+            <tr>
+                <td>@c.CategoryName</td>
+                <td>
+                    <form asp-action="Update" method="post"
+                          class="d-flex gap-2">
+                        <input type="hidden"
+                               name="categoryId"
+                               value="@c.CategoryId" />
+
+                        <input type="number"
+                               name="monthlyLimit"
+                               value="@c.MonthlyLimit"
+                               step="0.01"
+                               class="form-control" />
+
+                        <button class="btn btn-sm btn-primary">
+                            Save
+                        </button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

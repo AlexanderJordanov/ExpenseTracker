@@ -1,4 +1,4 @@
-﻿@model IEnumerable<ExpenseTracker.ViewModels.Expenses.ExpenseListViewModel>
+﻿@model ExpenseTracker.ViewModels.Expenses.ExpensesIndexViewModel
 
 @{
     ViewData["Title"] = "My Expenses";
@@ -10,7 +10,7 @@
         "USD" => 1.80m,
         "EUR" => 1.95m,
         "GBP" => 2.25m,
-        _ => 1m 
+        _ => 1m
     };
 
     string symbol = currency switch
@@ -40,46 +40,158 @@
     </div>
 </div>
 
-@if (!Model.Any())
+<!-- ================= BUDGET OVERVIEW ================= -->
+
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+            <h5 class="card-title mb-0">Monthly Budget Overview</h5>
+
+            <a asp-controller="Budgets"
+               asp-action="Manage"
+               class="btn btn-sm btn-outline-primary">
+                Manage limits
+            </a>
+        </div>
+
+
+        @if (!Model.Budget.Categories.Any())
+        {
+            <p class="mb-0 text-muted">No category limits configured.</p>
+        }
+        else
+        {
+            <p>
+                <strong>This month:</strong>
+                @((Model.Budget.TotalSpent / rateToBGN).ToString("F2")) @symbol
+                /
+                @((Model.Budget.TotalLimit / rateToBGN).ToString("F2")) @symbol
+                (@Model.Budget.OverallUsagePercent.ToString("F1")%)
+            </p>
+
+            @if (Model.Budget.OverallUsagePercent >= 100)
+            {
+                <div class="alert alert-danger py-2">
+                    You have exceeded your total monthly budget!
+                </div>
+            }
+            else if (Model.Budget.OverallUsagePercent >= 80)
+            {
+                <div class="alert alert-warning py-2">
+                    You have used more than 80% of your total monthly budget.
+                </div>
+            }
+
+            <table class="table table-sm align-middle mt-3">
+                <thead>
+                    <tr>
+                        <th>Category</th>
+                        <th class="text-end">Spent / Limit (@symbol)</th>
+                        <th style="width: 30%;">Usage</th>
+                        <th class="text-end">%</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var c in Model.Budget.Categories)
+                    {
+                        var spent = c.SpentThisMonth / rateToBGN;
+                        var limit = c.MonthlyLimit / rateToBGN;
+
+                        string progressClass = c.Status switch
+                        {
+                            "Exceeded" => "bg-danger",
+                            "Warning" => "bg-warning",
+                            _ => "bg-success"
+                        };
+
+                        <tr>
+                            <td>@c.CategoryName</td>
+                            <td class="text-end">
+                                @spent.ToString("F2") @symbol /
+                                @limit.ToString("F2") @symbol
+                            </td>
+                            <td>
+                                @if (c.MonthlyLimit > 0)
+                                {
+                                    <div class="progress" style="height: 18px;">
+                                        <div class="progress-bar @progressClass"
+                                             style="width: @Math.Min(c.UsagePercent, 100).ToString("F0")%;">
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">No limit</span>
+                                }
+                            </td>
+                            <td class="text-end">@c.UsagePercent.ToString("F1")%</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</div>
+
+<!-- ================= EXPENSES TABLE ================= -->
+@if (!Model.Expenses.Any())
 {
     <p>No expenses recorded yet.</p>
 }
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Date</th>
-            <th>Category</th>
-            <th class="text-end">Amount (@symbol)</th>
-            <th>Description</th>
-            <th class="text-end">Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var e in Model)
-        {
+else
+{
+    <table class="table table-striped">
+        <thead>
             <tr>
-                <td>@e.Date.ToShortDateString()</td>
-                <td>@e.CategoryName</td>
-                <td class="text-end">@((e.Amount / rateToBGN).ToString("F2")) @symbol</td>
-                <td>@e.Description</td>
-                <td class="text-end">
-                    <div class="btn-group btn-group-sm">
-                        <a asp-action="Edit"
-                           asp-route-id="@e.Id"
-                           class="btn btn-outline-secondary">
-                            Edit
-                        </a>
-                        <form asp-action="Delete"
-                              asp-route-id="@e.Id"
-                              method="post"
-                              class="d-inline"
-                              onsubmit="return confirm('Are you sure you want to delete this expense?');">
-                            <button type="submit" class="btn btn-outline-danger">Delete</button>
-                        </form>
-                    </div>
-                </td>
+                <th>Date</th>
+                <th>Category</th>
+                <th class="text-end">Amount (@symbol)</th>
+                <th>Description</th>
+                <th class="text-end">Actions</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var e in Model.Expenses)
+            {
+                <tr>
+                    <td>@e.Date.ToShortDateString()</td>
+                    <td>@e.CategoryName</td>
+                    <td class="text-end">
+                        @((e.Amount / rateToBGN).ToString("F2")) @symbol
+
+                        @if (e.BudgetStatus == "Warning")
+                        {
+                            <span class="text-warning ms-1" title="Approaching budget limit">⚠️</span>
+                        }
+                        else if (e.BudgetStatus == "Exceeded")
+                        {
+                            <span class="text-danger ms-1" title="Budget exceeded">❗</span>
+                        }
+                    </td>
+
+                    <td>@e.Description</td>
+                    <td class="text-end">
+                        <div class="btn-group btn-group-sm">
+                            <a asp-action="Edit"
+                               asp-route-id="@e.Id"
+                               class="btn btn-outline-secondary">
+                                Edit
+                            </a>
+
+                            <form asp-action="Delete"
+                                  asp-route-id="@e.Id"
+                                  method="post"
+                                  class="d-inline"
+                                  onsubmit="return confirm('Are you sure you want to delete this expense?');">
+                                <button type="submit"
+                                        class="btn btn-outline-danger">
+                                    Delete
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 }

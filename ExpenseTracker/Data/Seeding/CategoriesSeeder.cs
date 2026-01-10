@@ -23,9 +23,7 @@ namespace ExpenseTracker.Data.Seeding
                 {
                     dbContext.Categories.Add(new Category
                     {
-                        Name = cat,
-                        UserId = admin!.Id,
-                        MonthlyLimit = 0
+                        Name = cat
                     });
                 }
 
